@@ -4,7 +4,7 @@
  * Mark The Words module
  * @external {jQuery} $ H5P.jQuery
  */
-H5P.MarkTheWords = (function ($, Question, Word, KeyboardNav, XapiGenerator) {
+ H5P.MarkTheWords = (function ($, Question, Word, KeyboardNav, XapiGenerator) {
   /**
    * Initialize module.
    *
@@ -38,6 +38,7 @@ H5P.MarkTheWords = (function ($, Question, Word, KeyboardNav, XapiGenerator) {
       checkAnswerButton: "Check",
       tryAgainButton: "Retry",
       showSolutionButton: "Show solution",
+      viewSummary: "View Summary",
       correctAnswer: "Correct!",
       incorrectAnswer: "Incorrect!",
       missedAnswer: "Answer not found!",
@@ -279,10 +280,16 @@ H5P.MarkTheWords = (function ($, Question, Word, KeyboardNav, XapiGenerator) {
     });
 
     if (this.params.behaviour.enableCheckButton) {
-      this.addButton('check-answer', this.params.checkAnswerButton, function () {
+      this.addButton('check-answer', "Submit Answers", function () {
         self.isAnswered = true;
         var answers = self.calculateScore();
         self.feedbackSelectedWords();
+        var txt = "";
+        if(typeof self.parent == "undefined") {
+          
+          self.triggerXAPIScored(self.getScore(), self.getMaxScore(), 'submitted-curriki');
+          
+        }
 
         if (!self.showEvaluation(answers)) {
           // Only show if a correct answer was not found.
@@ -293,6 +300,7 @@ H5P.MarkTheWords = (function ($, Question, Word, KeyboardNav, XapiGenerator) {
             self.showButton('try-again');
           }
         }
+
         // Set focus to start of text
         self.$a11yClickableTextLabel.html(self.params.a11yCheckingHeader + ' - ' + self.params.a11yClickableTextLabel);
         self.$a11yClickableTextLabel.focus();
@@ -303,6 +311,39 @@ H5P.MarkTheWords = (function ($, Question, Word, KeyboardNav, XapiGenerator) {
       }, true, {
         'aria-label': this.params.a11yCheck,
       });
+      /* start code addd by dev_ln*/
+      /*if(typeof this.parent == "undefined") {
+        this.addButton('view-summary', this.params.viewSummary, function () { 
+            var answers = self.calculateScore();
+            var total_score = self.getMaxScore();
+            var scored_result = self.getScore();
+
+            var user_response = self.XapiGenerator.generateAnsweredEvent().data.statement.result.responsetext;
+            var correct_response = self.XapiGenerator.generateAnsweredEvent().data.statement.object.definition.getCorrectResponsesPatternText;
+            console.log(correct_response);
+            var confirmationDialog = new H5P.ConfirmationDialog({
+              headerText: 'Marks the word summary',
+              dialogText: showSummary(this,answers,total_score,scored_result,user_response,correct_response),
+              cancelText: 'Cancel',
+              confirmText: "Submit Answers"
+            });
+            
+            confirmationDialog.on('confirmed', function () {
+               self.triggerXAPIScored(0, 1, 'submitted-curriki');
+              //confirmationDialog.hide();
+              H5P.jQuery('.h5p-question-check-answer').click();
+              
+            });
+
+            confirmationDialog.appendTo(parent.document.body);
+            confirmationDialog.show();
+          // console.log(self.trigger(self.XapiGenerator.generateAnsweredEvent()));
+        }, true, {
+          'aria-label': this.params.a11yCheck,
+        });
+        
+      }*/
+      /*end code addd by dev_ln*/
     }
 
     this.addButton('try-again', this.params.tryAgainButton, this.resetTask.bind(this), false, {
@@ -327,6 +368,69 @@ H5P.MarkTheWords = (function ($, Question, Word, KeyboardNav, XapiGenerator) {
       'aria-label': this.params.a11yShowSolution,
     });
   };
+
+  /*started code by dev_ln */
+  function showSummary(self,answers,total_score,scored_result,user_response,correct_response) {
+
+      var table_content = '<tbody>';
+      var correct_response_rst = correct_response[0];
+      var result = correct_response_rst.split("[,]");
+      var res = user_response.split("[,]");
+    
+      var res = user_response.split("[,]");
+      if(user_response.length > 0){
+        for (var m =0; m < res.length; m++){
+          
+          var is_correct = $.inArray( res[m], result );
+          if(is_correct == -1){
+            var is_correct = "InCorrect";
+          }else{
+            var is_correct = "Correct";
+          }
+          table_content += '<tr>';
+          table_content += '<td>'+res[m]+'</td>';
+          table_content += '<td>'+is_correct+'</td>';
+          table_content += '</tr>';
+
+        
+        
+        }
+        var summary_html = '<div class="custom-summary-section"><div class="h5p-summary-table-pages"><table class="h5p-score-table-custom" style="min-height:100px;width:100%"><thead><tr><th>Ans</th><th>Correct</th></tr></thead>'+table_content+'</table></div></div>';
+        var table_content_overall_score = '<tbody>';
+        table_content_overall_score += '<tr>';
+        table_content_overall_score += '<td>'+answers.correct+'</td>';
+        table_content_overall_score += '<td>'+answers.missed+'</td>';
+        table_content_overall_score += '<td>'+answers.wrong+'</td>';
+        table_content_overall_score += '<td>'+scored_result+'/ '+total_score+'</td>';
+        table_content_overall_score += '</tr>';
+       
+        var overall_summary_html = '<div class="custom-summary-section"><div class="h5p-summary-table-pages"><table class="h5p-score-table-custom" style="min-height:100px;width:100%"><thead><tr><th>Correct Ans</th><th>Missed Qus</th><th>Wrong Attempt</th><th>Score</th></tr></thead>'+table_content_overall_score+'</table></div></div>';
+        
+        var correct_option_list_html = '<div class="custom-summary-section"><h1>Correct Words:</h1>';
+        for (var m =0; m < result.length; m++){
+          if(m == 0){
+            correct_option_list_html += result[m];
+          }else{
+            correct_option_list_html += ','+result[m];
+          }
+          
+        }  
+        correct_option_list_html += '</div';
+
+        var summary_html = summary_html.concat(overall_summary_html);
+        var summary_html = summary_html.concat(correct_option_list_html);
+
+
+
+      }else{
+        var summary_html = '<div class="custom-summary-section"><b>Users not mark any word yet.</b></div>';
+      }  
+
+    
+    // var summary_html = '<div class="custom-summary-section"><div class="h5p-summary-table-pages"><table class="h5p-score-table-custom" style="min-height:100px;width:100%"><thead><tr><th>Correct Ans</th><th>Missed Qus</th><th>Wrong Attempt</th><th>Score</th></tr></thead>'+table_content+'</table></div></div>';
+    return summary_html;
+  }
+  /*end code by dev_ln */
 
   /**
    * Toggle whether words can be selected
@@ -464,6 +568,7 @@ H5P.MarkTheWords = (function ($, Question, Word, KeyboardNav, XapiGenerator) {
 
     // iterate over words, and calculate score
     var answers = self.selectableWords.reduce(function (result, word) {
+      
       if (word.isCorrect()) {
         result.correct++;
       }
@@ -484,7 +589,7 @@ H5P.MarkTheWords = (function ($, Question, Word, KeyboardNav, XapiGenerator) {
 
     // no negative score
     answers.score = Math.max(answers.correct - answers.wrong, 0);
-
+    
     return answers;
   };
 
