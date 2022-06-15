@@ -299,7 +299,7 @@
     });
 
     if (this.params.behaviour.enableCheckButton) {
-      this.addButton('check-answer', "Check Answers", function () {
+      this.addButton('check-answer', this.params.checkAnswerButton, function () {
         self.isAnswered = true;
         var answers = self.calculateScore();
         self.feedbackSelectedWords();
