@@ -1,6 +1,18 @@
 {
   "semantics": [
     {
+      "label": "Media",
+      "fields": [
+        {
+          "label": "Tipo",
+          "description": "Media facoltativo da mostrare sopra la domanda"
+        },
+        {
+          "label": "Disabilita lo zoom dell'immagine"
+        }
+      ]
+    },
+    {
       "label": "Descrizione del compito",
       "description": "Descrivi come l'apprendente deve risolvere il compito",
       "placeholder": "Clicca su tutti i verbi nel testo che segue"
@@ -8,7 +20,6 @@
     {
       "label": "Campo di testo",
       "placeholder": "Questa è una risposta: *answer*",
-      "description": "",
       "important": {
         "description": "<ul><li>Le parole marcate vengono aggiunte mediante un asterisco (*).</li><li>Gli asterischi possono essere aggiunti all'interno di parole marcate attraverso un ulteriore asterisco. Es. *parola-corretta*** =&gt; parola-corretta*.</li></ul>",
         "example": "Le parole corrette sono marcate in questo modo: *parola-corretta*. Un asterisco è scritto così: *parola-corretta***"
@@ -33,8 +44,8 @@
               },
               {},
               {
-                "label": "Feedback per un intervallo definito",
-                "placeholder": "Compila il feedback"
+                "label": "Feedback for defined score range",
+                "placeholder": "Fill in the feedback"
               }
             ]
           }
@@ -44,6 +55,10 @@
     {
       "label": "Testo per il pulsante \"Verifica\"",
       "default": "Verifica"
+    },
+    {
+      "label": "Text for \"Submit\" button",
+      "default": "Submit"
     },
     {
       "label": "Testo per il pulsante \"Riprova\"",

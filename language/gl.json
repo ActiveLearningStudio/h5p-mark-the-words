@@ -1,6 +1,18 @@
 {
   "semantics": [
     {
+      "label": "Medios",
+      "fields": [
+        {
+          "label": "Tipo",
+          "description": "Medios opcionais amosados enriba da pregunta."
+        },
+        {
+          "label": "Desactivar zoom de imaxes"
+        }
+      ]
+    },
+    {
       "label": "Descrición da tarefa",
       "description": "Describe como debería resolver a tarefa o usuario.",
       "placeholder": "Preme en todos os verbos do texto."
@@ -8,7 +20,6 @@
     {
       "label": "Campo de texto",
       "placeholder": "Esta é unha resposta: *resposta*.",
-      "description": "",
       "important": {
         "description": "<ul><li>As palabras marcadas engádense cun asterísco (*).</li><li>Pódense engadir asteríscos dentro das palabras marcadas engadindo outro asterísco, *palabracorrecta*** =&gt; palabracorrecta*.</li></ul>",
         "example": "As palabras correctas márcanse así: *palabracorrecta*, o asterísco escríbese así: *palabracorrecta***."
@@ -23,18 +34,18 @@
               "label": "Por defecto"
             }
           ],
-          "label": "Define a retroalimentación personalizada para cada rango de puntuación",
-          "description": "Preme o botón \"Engadir rango\" para engadir todos os rangos que precises. Exemplo: 0-20% Puntuación mala, 21-91% Puntuación media, 91-100% Puntuación xenial!",
+          "label": "Definir retroalimentación personalizada para calquera rango de puntuación",
+          "description": "Preme o botón \"Engadir rango\" para engadir tantos rangos como precises. Exemplo: 0-20% Mala Puntuación, 21-91% Puntuación Media, 91-100% Puntuación Xenial!",
           "entity": "rango",
           "field": {
             "fields": [
               {
-                "label": "Rango de Puntuación"
+                "label": "Rango de puntuación"
               },
               {},
               {
                 "label": "Retroalimentación para o rango de puntuación definido",
-                "placeholder": "Escribe a retroalimentación"
+                "placeholder": "Escribe a túa retroalimentación"
               }
             ]
           }
@@ -46,8 +57,12 @@
       "default": "Comprobar"
     },
     {
-      "label": "Texto para o botón \"Reintentar\"",
-      "default": "Reintentar"
+      "label": "Texto para o botón \"Enviar\"",
+      "default": "Submit"
+    },
+    {
+      "label": "Texto para o botón \"Tentar de novo\"",
+      "default": "Tentar de novo"
     },
     {
       "label": "Texto para o botón \"Amosar solución\"",
@@ -93,8 +108,8 @@
       "description": "Este texto dille ao usuario que as tarefas actualizáronse coas solucións."
     },
     {
-      "label": "Representación textual ba barra de puntuación cando se usa un lector de pantalla",
-      "default": "Conseguiches :num puntos de :total"
+      "label": "Representación textual da puntuación cando se está a usar un lector de pantalla",
+      "default": "Conseguiches :num dun total de :total puntos"
     },
     {
       "label": "Etiqueta para texto lexible completo para as tecnoloxías de asistencia",
