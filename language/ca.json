@@ -1,6 +1,18 @@
 {
   "semantics": [
     {
+      "label": "Recurs",
+      "fields": [
+        {
+          "label": "Tipus",
+          "description": "Recursos opcionals per mostrar al damunt de la pregunta."
+        },
+        {
+          "label": "Deshabilita el zoom de les imatges"
+        }
+      ]
+    },
+    {
       "label": "Descripció de la tasca",
       "description": "Descriu com l’usuari ha de resoldre la tasca.",
       "placeholder": "Feu clic en tots els verbs del text que es mostra a continuació."
@@ -8,7 +20,6 @@
     {
       "label": "Camp de text",
       "placeholder": "Aquesta és una resposta: *resposta*.",
-      "description": "",
       "important": {
         "description": "<ul><li>Les paraules que s’han de marcar s’afegeixen amb un asterisc (*).</li><li>Es poden afegir asteriscs a les paraules marcades afegint un altre asterisc, *paraulacorrecta*** =&gt; paraulacorrecta*.</li></ul>",
         "example": "Les paraules correctes es marquen així: *paraulacorrecta*; l’asterisc s’introdueix així: *paraulacorrecta***."
@@ -44,6 +55,10 @@
     {
       "label": "Text pel botó \"Verificar\"",
       "default": "Verifica"
+    },
+    {
+      "label": "Text for \"Submit\" button",
+      "default": "Submit"
     },
     {
       "label": "Text del botó \"Torna-ho a provar\"",

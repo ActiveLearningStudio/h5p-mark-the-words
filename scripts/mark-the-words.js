@@ -17,7 +17,6 @@
    * @returns {Object} MarkTheWords Mark the words instance
    */
   function MarkTheWords(params, contentId, contentData) {
-    var self = this;
     this.contentId = contentId;
     this.contentData = contentData;
     this.introductionId = 'mark-the-words-introduction-' + contentId;
@@ -26,6 +25,7 @@
 
     // Set default behavior.
     this.params = $.extend(true, {
+      media: {},
       taskDescription: "",
       textField: "This is a *nice*, *flexible* content type.",
       overallFeedback: [],
@@ -36,6 +36,7 @@
         showScorePoints: true
       },
       checkAnswerButton: "Check",
+      submitAnswerButton: "Submit",
       tryAgainButton: "Retry",
       showSolutionButton: "Show solution",
       viewSummary: "View Summary",
@@ -86,8 +87,8 @@
 
     // check is parent is IV or QS, if so then on open then activity will be started
     const isEmbedInComplexActivity = this.contentData && this.contentData.parent && this.contentData.parent.contentData
-      && this.contentData.parent.contentData.metadata && this.contentData.parent.contentData.metadata.contentType
-        && ['Interactive Video', 'Brightcove Interactive Video', 'Question Set'].includes(this.contentData.parent.contentData.metadata.contentType);
+      && this.contentData.parent.contentData.libraryInfo && this.contentData.parent.contentData.libraryInfo.machineName
+      && isDynamicTasks.includes(this.contentData.parent.contentData.libraryInfo.machineName);
 
     if(!isEmbedInComplexActivity) {
       // for XAPI duration
@@ -95,6 +96,13 @@
     }
 
   };
+
+  var isDynamicTasks = [
+    'H5P.InteractiveVideo',
+    'H5P.BrightcoveInteractiveVideo',
+    'H5P.CurrikiInteractiveVideo',
+    'H5P.QuestionSet'
+  ];
 
   /**
    * Recursive function that creates html for the words
@@ -193,12 +201,12 @@
     var indexes = [];
     var selectables = this.$wordContainer.find('span.h5p-word-selectable');
 
-    selectables.each(function(index, selectable) {
-      if ($(selectable).next().is('br')){
+    selectables.each(function (index, selectable) {
+      if ($(selectable).next().is('br')) {
         indexes.push(index);
       }
 
-      if ($(selectable).parent('p') && !$(selectable).parent().is(':last-child') && $(selectable).is(':last-child')){
+      if ($(selectable).parent('p') && !$(selectable).parent().is(':last-child') && $(selectable).is(':last-child')) {
         indexes.push(index);
       }
     });
@@ -249,6 +257,7 @@
       // Add keyboard navigation to this element
       var selectableWord = new Word($(this), self.params);
       if (selectableWord.isAnswer()) {
+        self.isAnswered = true;
         self.answers += 1;
       }
       self.selectableWords.push(selectableWord);
@@ -297,7 +306,7 @@
     });
 
     if (this.params.behaviour.enableCheckButton) {
-      this.addButton('check-answer', "Check Answers", function () {
+      this.addButton('check-answer', this.params.checkAnswerButton, function () {
         self.isAnswered = true;
         var answers = self.calculateScore();
         self.feedbackSelectedWords();
@@ -330,6 +339,9 @@
         self.toggleSelectable(true);
       }, true, {
         'aria-label': this.params.a11yCheck,
+      }, {
+        contentData: this.contentData,
+        textIfSubmitting: this.params.submitAnswerButton,
       });
       /* start code addd by dev_ln*/
       /*if(typeof this.parent == "undefined") {
@@ -779,6 +791,8 @@
       if (isNaN(answeredWordIndex) || answeredWordIndex >= self.selectableWords.length || answeredWordIndex < 0) {
         throw new Error('Stored user state is invalid');
       }
+
+      self.isAnswered = true;
       self.selectableWords[answeredWordIndex].setSelected();
     });
   };
@@ -789,6 +803,35 @@
    * @see {@link https://github.com/h5p/h5p-question/blob/1558b6144333a431dd71e61c7021d0126b18e252/scripts/question.js#L1236|Called from H5P.Question}
    */
   MarkTheWords.prototype.registerDomElements = function () {
+    // Register optional media
+    let media = this.params.media;
+    if (media && media.type && media.type.library) {
+      media = media.type;
+      const type = media.library.split(' ')[0];
+      if (type === 'H5P.Image') {
+        if (media.params.file) {
+          // Register task image
+          this.setImage(media.params.file.path, {
+            disableImageZooming: this.params.media.disableImageZooming || false,
+            alt: media.params.alt,
+            title: media.params.title
+          });
+        }
+      }
+      else if (type === 'H5P.Video') {
+        if (media.params.sources) {
+          // Register task video
+          this.setVideo(media);
+        }
+      }
+      else if (type === 'H5P.Audio') {
+        if (media.params.files) {
+          // Register task audio
+          this.setAudio(media);
+        }
+      }
+    }
+
     // wrap introduction in div with id
     var introduction = '<div id="' + this.introductionId + '">' + this.params.taskDescription + '</div>';
 
@@ -828,9 +871,9 @@
 /**
  * Static utility method for parsing H5P.MarkTheWords content item questions
  * into format useful for generating reports.
- * 
+ *
  * Example input: "<p lang=\"en\">I like *pizza* and *burgers*.</p>"
- * 
+ *
  * Produces the following:
  * [
  *   {
@@ -854,7 +897,7 @@
  *     content: '.'
  *   }
  * ]
- * 
+ *
  * @param {string} question MarkTheWords textField (html)
  */
 H5P.MarkTheWords.parseText = function (question) {
@@ -862,41 +905,41 @@ H5P.MarkTheWords.parseText = function (question) {
   /**
    * Separate all words surrounded by a space and an asterisk and any other
    * sequence of non-whitespace characters from str into an array.
-   * 
-   * @param {string} str 
+   *
+   * @param {string} str
    * @returns {string[]} array of all words in the given string
    */
-  function getWords(str) { 
+  function getWords(str) {
     return str.match(/ \*[^\*]+\* |[^\s]+/g);
   }
 
   /**
    * Replace each HTML tag in str with the provided value and return the resulting string
-   * 
+   *
    * Regexp expression explained:
    *   <     - first character is '<'
    *   [^>]* - followed by zero or more occurences of any character except '>'
    *   >     - last character is '>'
-   **/ 
+   **/
   function replaceHtmlTags(str, value) {
     return str.replace(/<[^>]*>/g, value);
   }
 
   function startsAndEndsWith(char, str) {
     return str.startsWith(char) && str.endsWith(char);
-  };
+  }
 
   function removeLeadingPunctuation(str) {
     return str.replace(/^[\[\({⟨¿¡“"«„]+/, '');
-  };
+  }
 
   function removeTrailingPunctuation(str) {
     return str.replace(/[",….:;?!\]\)}⟩»”]+$/, '');
-  };
+  }
 
   /**
    * Escape double asterisks ** = *, and remove single asterisk.
-   * @param {string} str 
+   * @param {string} str
    */
   function handleAsterisks(str) {
     var asteriskIndex = str.indexOf('*');
@@ -906,39 +949,48 @@ H5P.MarkTheWords.parseText = function (question) {
       asteriskIndex = str.indexOf('*', asteriskIndex + 1);
     }
     return str;
-  };
+  }
 
   /**
    * Decode HTML entities (e.g. &nbsp;) from the given string using the DOM API
-   * @param {string} str 
+   * @param {string} str
    */
   function decodeHtmlEntities(str) {
     const el = document.createElement('textarea');
     el.innerHTML = str;
     return el.value;
-  };
+  }
 
   const wordsWithAsterisksNotRemovedYet = getWords(replaceHtmlTags(decodeHtmlEntities(question), ' '))
-    .map(function(w) { return w.trim(); })
-    .map(function(w) { return removeLeadingPunctuation(w); })
-    .map(function(w) { return removeTrailingPunctuation(w); });
-  
-  const allSelectableWords = wordsWithAsterisksNotRemovedYet
-    .map(function(w) { return handleAsterisks(w); });
+    .map(function (w) {
+      return w.trim();
+    })
+    .map(function (w) {
+      return removeLeadingPunctuation(w);
+    })
+    .map(function (w) {
+      return removeTrailingPunctuation(w);
+    });
+
+  const allSelectableWords = wordsWithAsterisksNotRemovedYet.map(function (w) {
+    return handleAsterisks(w);
+  });
 
   const correctWordIndexes = [];
 
   const correctWords = wordsWithAsterisksNotRemovedYet
-    .filter(function(w, i) { 
+    .filter(function (w, i) {
       if (startsAndEndsWith('*', w)) {
         correctWordIndexes.push(i);
         return true;
       }
       return false;
     })
-    .map(function(w) { return handleAsterisks(w); });
-  
-  const printableQuestion = replaceHtmlTags(decodeHtmlEntities(question), '')
+    .map(function (w) {
+      return handleAsterisks(w);
+    });
+
+  const printableQuestion = replaceHtmlTags(decodeHtmlEntities(question), ' ')
     .replace('\xa0', '\x20');
 
   return {
@@ -946,10 +998,10 @@ H5P.MarkTheWords.parseText = function (question) {
     correctWords: correctWords,
     correctWordIndexes: correctWordIndexes,
     textWithPlaceholders: printableQuestion.match(/[^\s]+/g)
-      .reduce(function(textWithPlaceholders, word, index) {
+      .reduce(function (textWithPlaceholders, word, index) {
         word = removeTrailingPunctuation(
           removeLeadingPunctuation(word));
-        
+
         return textWithPlaceholders.replace(word, '%' + index);
       }, printableQuestion)
   };

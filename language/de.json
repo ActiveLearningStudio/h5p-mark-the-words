@@ -1,6 +1,18 @@
 {
   "semantics": [
     {
+      "label": "Medien",
+      "fields": [
+        {
+          "label": "Typ",
+          "description": "Medium, das wahlweise oberhalb der Aufgabe angezeigt wird."
+        },
+        {
+          "label": "Bild-Zoom deaktivieren"
+        }
+      ]
+    },
+    {
       "label": "Aufgabenbeschreibung",
       "description": "Beschreibung, wie die Lernenden die Aufgabe lösen sollten. Wird über dem Medium angezeigt.",
       "placeholder": "Klicke auf alle Verben im folgenden Text."
@@ -8,7 +20,6 @@
     {
       "label": "Textfeld",
       "placeholder": "Das ist eine Antwort: *Antwort*.",
-      "description": "",
       "important": {
         "description": "<ul><li>Die zu findenden Wörter werden mit einem Sternchen (*) markiert.</li><li>Soll in einem zu findenden Wort ein Sternchen verwendet werden, gibt man ** ein.</li></ul>",
         "example": "Richtige Wörter werden wie folgt markiert: *richtigeswort*. Ein Sternchen in einem richtigen Wort auf diese Weise: *richtiges**Wort*."
@@ -44,6 +55,10 @@
     {
       "label": "Beschriftung des \"Überprüfen\"-Buttons",
       "default": "Überprüfen"
+    },
+    {
+      "label": "Beschriftung des \"Absenden\"-Buttons",
+      "default": "Submit"
     },
     {
       "label": "Beschriftung des \"Wiederholen\"-Buttons",

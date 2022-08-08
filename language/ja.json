@@ -1,6 +1,18 @@
 {
   "semantics": [
     {
+      "label": "メディア",
+      "fields": [
+        {
+          "label": "タイプ",
+          "description": "設問の上に表示するオプションのメディア。"
+        },
+        {
+          "label": "画像のズーム機能を無効化"
+        }
+      ]
+    },
+    {
       "label": "タスクの説明",
       "description": "ユーザーがタスクを解決する方法について説明してください。",
       "placeholder": "後に続くテキストのすべての動詞をクリックします。"
@@ -8,7 +20,6 @@
     {
       "label": "テキストフィールド",
       "placeholder": "これが解答です。: *answer*",
-      "description": "",
       "important": {
         "description": "<ul><li>マークする単語にはアスタリスク (*) を加えます。</li><li>アスタリスクは別のアスタリスクでエスケープ処理されるので、** は * となります。</li></ul>",
         "example": "The correct words are marked like this: *correctword*, an asterisk is written like this: *correctword***."
@@ -33,8 +44,8 @@
               },
               {},
               {
-                "label": "定義した得点範囲に対するフィードバック",
-                "placeholder": "フィードバックを記入"
+                "label": "Feedback for defined score range",
+                "placeholder": "Fill in the feedback"
               }
             ]
           }
@@ -44,6 +55,10 @@
     {
       "label": "「チェック」ボタンのテキスト",
       "default": "チェック"
+    },
+    {
+      "label": "Text for \"Submit\" button",
+      "default": "Submit"
     },
     {
       "label": "「リトライ」ボタンのテキスト",

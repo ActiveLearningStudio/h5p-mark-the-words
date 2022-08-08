@@ -1,6 +1,18 @@
 {
   "semantics": [
     {
+      "label": "Média",
+      "fields": [
+        {
+          "label": "Typ",
+          "description": "Volitelná média zobrazená nad otázkou."
+        },
+        {
+          "label": "Zakázat zvětšení obrazu"
+        }
+      ]
+    },
+    {
       "label": "Popis úlohy",
       "description": "Popište, jak by měl uživatel úlohu vyřešit.",
       "placeholder": "Klikněte na všechna slovesa v následujícím textu."
@@ -8,7 +20,6 @@
     {
       "label": "Textové pole",
       "placeholder": "To je odpověď: *odpověď*.",
-      "description": "",
       "important": {
         "description": "<ul><li>Označená slova jsou přidána s hvězdičkou (*).</li><li>Hvězdičky lze přidat do označených slov přidáním další hvězdičky, *správnéslovo*** =&gt; správnéslovo*.</li></ul>",
         "example": "Správná slova jsou takto označena: *správnéslovo*, takto je napsána hvězdička: *správnéslovo***."
@@ -33,8 +44,8 @@
               },
               {},
               {
-                "label": "Zpětná vazba pro definovaný rozsah skóre",
-                "placeholder": "Vyplňte zpětnou vazbu"
+                "label": "Feedback for defined score range",
+                "placeholder": "Fill in the feedback"
               }
             ]
           }
@@ -46,7 +57,11 @@
       "default": "Zkontrolovat"
     },
     {
-      "label": "Popisek tlačítka \"Opakovat\"",
+      "label": "Text for \"Submit\" button",
+      "default": "Submit"
+    },
+    {
+      "label": "Text tlačítka \"Opakovat\" ",
       "default": "Opakovat"
     },
     {

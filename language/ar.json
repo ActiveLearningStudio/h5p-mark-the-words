@@ -1,6 +1,18 @@
 {
   "semantics": [
     {
+      "label": "وسائط",
+      "fields": [
+        {
+          "label": "النوع",
+          "description": "وسائط إضافية اختيارية تُعرض أعلى السؤال."
+        },
+        {
+          "label": "إيقاف ميزة تكبير الصور"
+        }
+      ]
+    },
+    {
       "label": "وصف النشاط",
       "description": "وصف الكيفية التي ينبغي للمستخدم حل النشاط",
       "placeholder": "Click on all the verbs in the text that follows."
@@ -8,7 +20,6 @@
     {
       "label": "الحقل النصي",
       "placeholder": "This is an answer: *answer*.",
-      "description": "",
       "important": {
         "description": "<ul><li>Marked words are added with an asterisk (*).</li><li>Asterisks can be added within marked words by adding another asterisk, *correctword*** =&gt; correctword*.</li></ul>",
         "example": "The correct words are marked like this: *correctword*, an asterisk is written like this: *correctword***."
@@ -23,18 +34,18 @@
               "label": "الافتراضي"
             }
           ],
-          "label": "Define custom feedback for any score range",
-          "description": "Click the \"Add range\" button to add as many ranges as you need. Example: 0-20% Bad score, 21-91% Average Score, 91-100% Great Score!",
-          "entity": "range",
+          "label": "تحديد الملاحظات المخصصة لأي نطاق درجة",
+          "description": "انقر على زر \"إضافة نطاق\" لإضافة ما ترغب به من نطاقات، ومثال على ذلك: 0-20٪ نتيجة سيئة، 21-91٪ نتيجة متوسطة، 91-100٪ نتيجة رائعة!",
+          "entity": "النطاق",
           "field": {
             "fields": [
               {
-                "label": "Score Range"
+                "label": "نطاق الدرجة"
               },
               {},
               {
-                "label": "Feedback for defined score range",
-                "placeholder": "Fill in the feedback"
+                "label": "ملاحظات لنطاق درجة محدد",
+                "placeholder": "أدخل الملاحظات"
               }
             ]
           }
@@ -44,6 +55,10 @@
     {
       "label": "النص ل \"تحقق \" الزر",
       "default": "Check"
+    },
+    {
+      "label": "Text for \"Submit\" button",
+      "default": "Submit"
     },
     {
       "label": "النص ل \"إعادة المحاولة \" الزر",
